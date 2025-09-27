@@ -101,29 +101,41 @@
     <button class="toggle-list-btn" onclick="toggleList()">Show List</button>
     <script>
         let ret = [];
-        let selected;
         let res = [];
+        let nameObj = [];
+        let selected;
+        let isClickable = true;
         async function nextRandom() {
-            if (ret.length === 0) {
+            if(!isClickable){
+                console.log('false')
+                return;
+            }
+            isClickable = false;
+            if (nameObj.length === 0) {
                 document.getElementById("myName1").innerHTML = `No more peepoz │ ･ᯅ･ )`;
                 document.getElementById("myName2").innerHTML = ``;
             }
-            else if (ret.length) {
-                let namesLen = ret.length;
+            else if (nameObj.length) {
+                let namesLen = nameObj.length;
                 selected = Math.floor(Math.random() * (namesLen));
                 // console.log(r);
                 // console.log(r,ret[r]);
                 // let d = await GetViewerDisplayName('tw_shiori', ret[selected])
                 // console.log(res[selected]);
-                document.getElementById("myName1").innerHTML = `${ret[selected]}`;
-                document.getElementById("myName2").innerHTML = `${res[selected]}`;
-                console.log('before');
-                console.log(ret);
-                addListItem(`${ret[selected]} | ${res[selected]}`);
-                ret.splice(selected, 1);
+                console.log(nameObj);
+                console.log('before', selected  );
+                document.getElementById("myName1").innerHTML = `${nameObj[selected][1]}`;
+                document.getElementById("myName2").innerHTML = `${nameObj[selected][0]}`;
+                console.log(nameObj[selected][0],nameObj[selected][1],selected);
+                addListItem(`${nameObj[selected][0]} | ${nameObj[selected][1]}`);
+                nameObj.splice(selected, 1);
                 console.log('after');
                 console.log(ret);
+                // myCard = document.getElementById('myCard');
+                // myCard.style.pointerEvents = "auto"
+
             }
+            isClickable=true;
         }
         function addListItem(text) {
             const list = document.getElementById("itemList"); // get the ul
@@ -209,18 +221,19 @@
             for (let i = 0; i < res.length; i++) {
                 // console.log(res[i][0])
                 res[i]=res[i][0].data.targetUser.displayName;
+                nameObj.push([res[i],ret[i]]);
             }
-
+            console.log(nameObj);
             console.log('hi');
             console.log(res);
-            let namesLen = ret.length;
+            let namesLen = nameObj.length;
             selected = Math.floor(Math.random() * (namesLen));
             console.log(selected);
             console.log(selected, ret[selected]);
             // let d = await GetViewerDisplayName('tw_shiori', ret[selected])
             // console.log(d[0].data.targetUser.displayName);
-            document.getElementById("myName1").innerHTML = `${ret[selected]}`;
-            document.getElementById("myName2").innerHTML = `${res[selected]}`;
+            document.getElementById("myName1").innerHTML = `${nameObj[selected][1]}`;
+            document.getElementById("myName2").innerHTML = `${nameObj[selected][0]}`;
             document.getElementById("myCard").style.display = 'block';
         }
         main();
