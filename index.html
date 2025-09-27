@@ -53,45 +53,103 @@
             transition: background-color 0.3s ease;
         }
 
+        /* Bottom-right button */
+        .toggle-list-btn {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
+        }
+
+        /* Hidden list container */
+        .list-container {
+            position: absolute;
+            top: 1rem;
+            /* distance from the top of the card */
+            right: 1rem;
+            /* distance from the right of the card */
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
+        }
+
         .card button:hover {
             background-color: #0056b3;
+        }
+
+        .toggle-list-btn.active {
+            background-color: #28a745;
+            /* green when active */
         }
     </style>
 </head>
 
 <body>
-    <div class="card" onclick="nextRandom()">
+    <div class="card" id="myCard" onclick="nextRandom()" style="display:none;">
         <h3 id="myName1"></h3>
         <h1 id="myName2"></h1>
         <!-- <p>This is a centered card on the page.</p> -->
         <!-- <button onclick="showMessage()">Click Me</button> -->
     </div>
-
+    <!-- Bottom-right toggle button -->
+    <!-- List area -->
+    <div class="list-container" id="listContainer" style="display: none">
+        <ol id="itemList">
+            <!-- List items will appear here -->
+        </ol>
+    </div>
+    <button class="toggle-list-btn" onclick="toggleList()">Show List</button>
     <script>
         let ret = [];
         let selected;
+        let res = [];
         async function nextRandom() {
-            if(ret.length === 0){
+            if (ret.length === 0) {
                 document.getElementById("myName1").innerHTML = `No more peepoz │ ･ᯅ･ )`;
                 document.getElementById("myName2").innerHTML = ``;
             }
-        
-            else if(ret.length){
+            else if (ret.length) {
                 let namesLen = ret.length;
-                selected=Math.floor(Math.random()*(namesLen));
+                selected = Math.floor(Math.random() * (namesLen));
                 // console.log(r);
                 // console.log(r,ret[r]);
-                let d = await GetViewerDisplayName('tw_shiori', ret[selected])
-                console.log(d[0].data.targetUser.displayName);
+                // let d = await GetViewerDisplayName('tw_shiori', ret[selected])
+                // console.log(res[selected]);
                 document.getElementById("myName1").innerHTML = `${ret[selected]}`;
-                document.getElementById("myName2").innerHTML = `${d[0].data.targetUser.displayName}`;
+                document.getElementById("myName2").innerHTML = `${res[selected]}`;
                 console.log('before');
                 console.log(ret);
-                ret.splice(selected,1);
+                addListItem(`${ret[selected]} | ${res[selected]}`);
+                ret.splice(selected, 1);
                 console.log('after');
                 console.log(ret);
             }
         }
+        function addListItem(text) {
+            const list = document.getElementById("itemList"); // get the ul
+            const li = document.createElement("li");         // create a new li
+            li.textContent = text;                            // set its text
+            list.appendChild(li);                             // add it to the ul
+        }
+
+        const list = document.getElementById('itemList');
+        function toggleList() {
+            const container = document.getElementById('listContainer');
+            // button.classList.toggle("active");
+            if (container.style.display === 'none' || container.style.display === '') {
+                // Populate list (example)
+                //     list.innerHTML = `Remaining candidates
+                // <li>Item 1</li>
+                // <li>Item 2</li>
+                // <li>Item 3</li>
+                // `;
+                container.style.display = 'block';
+            } else {
+                container.style.display = 'none';
+            }
+        }
+
+
         async function getUsername() {
             return fetch('https://gql.twitch.tv/gql#origin=twilight', {
                 method: 'POST',
@@ -113,7 +171,7 @@
                     }
                 }])
             })
-            .then(response => response.json())
+                .then(response => response.json())
         }
         async function GetViewerDisplayName(streamerName, targetName) {
             let req = await fetch("https://gql.twitch.tv/gql#origin=twilight", {
@@ -127,28 +185,43 @@
             return req;
         }
 
-        async function main(){
+        async function main() {
             let names = await getUsername();
-            for(let k in names[0].data.channel.chatters){
+            for (let k in names[0].data.channel.chatters) {
                 // console.log(k);
-                if(names[0].data.channel.chatters[k].length){
-                    for(let i of names[0].data.channel.chatters[k]){
-                        if(i.login){
+                if (names[0].data.channel.chatters[k].length) {
+                    for (let i of names[0].data.channel.chatters[k]) {
+                        if (i.login) {
                             // console.log(i.login);
                             ret.push(i.login);
                         }
                     }
                 }
             }
-            // console.log('hi');
+            let requestArr = [];
+
+            for (let i = 0; i < ret.length; i++) {
+                requestArr.push(GetViewerDisplayName('tw_shiori', ret[i]));
+            }
+
+
+            res = await Promise.all(requestArr);
+            for (let i = 0; i < res.length; i++) {
+                // console.log(res[i][0])
+                res[i]=res[i][0].data.targetUser.displayName;
+            }
+
+            console.log('hi');
+            console.log(res);
             let namesLen = ret.length;
-            selected=Math.floor(Math.random()*(namesLen));
+            selected = Math.floor(Math.random() * (namesLen));
             console.log(selected);
-            console.log(selected,ret[selected]);
-            let d = await GetViewerDisplayName('tw_shiori', ret[selected])
-            console.log(d[0].data.targetUser.displayName);
+            console.log(selected, ret[selected]);
+            // let d = await GetViewerDisplayName('tw_shiori', ret[selected])
+            // console.log(d[0].data.targetUser.displayName);
             document.getElementById("myName1").innerHTML = `${ret[selected]}`;
-            document.getElementById("myName2").innerHTML = `${d[0].data.targetUser.displayName}`;
+            document.getElementById("myName2").innerHTML = `${res[selected]}`;
+            document.getElementById("myCard").style.display = 'block';
         }
         main();
         console.log(ret);
