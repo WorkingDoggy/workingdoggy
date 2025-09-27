@@ -100,11 +100,12 @@
     </div>
     <button class="toggle-list-btn" onclick="toggleList()">Show List</button>
     <script>
-        let ret = [];
+        let ret = new Map();
         let res = [];
         let nameObj = [];
         let selected;
         let isClickable = true;
+        let m = new Map();
         async function nextRandom() {
             if(!isClickable){
                 console.log('false')
@@ -124,13 +125,17 @@
                 // console.log(res[selected]);
                 console.log(nameObj);
                 console.log('before', selected  );
+                if(m.has(nameObj[selected][1])){
+                    console.log(nameObj[selected][1],'already');
+                }
                 document.getElementById("myName1").innerHTML = `${nameObj[selected][1]}`;
                 document.getElementById("myName2").innerHTML = `${nameObj[selected][0]}`;
                 console.log(nameObj[selected][0],nameObj[selected][1],selected);
                 addListItem(`${nameObj[selected][0]} | ${nameObj[selected][1]}`);
+                m.set(nameObj[selected][1],'');
                 nameObj.splice(selected, 1);
                 console.log('after');
-                console.log(ret);
+                console.log(nameObj);
                 // myCard = document.getElementById('myCard');
                 // myCard.style.pointerEvents = "auto"
 
@@ -205,11 +210,12 @@
                     for (let i of names[0].data.channel.chatters[k]) {
                         if (i.login) {
                             // console.log(i.login);
-                            ret.push(i.login);
+                            ret.set(i.login,'');
                         }
                     }
                 }
             }
+            ret = [...ret.keys()];
             let requestArr = [];
 
             for (let i = 0; i < ret.length; i++) {
@@ -229,13 +235,14 @@
             let namesLen = nameObj.length;
             selected = Math.floor(Math.random() * (namesLen));
             console.log(selected);
-            console.log(selected, ret[selected]);
+            console.log(selected, nameObj[selected]);
             // let d = await GetViewerDisplayName('tw_shiori', ret[selected])
             // console.log(d[0].data.targetUser.displayName);
             document.getElementById("myName1").innerHTML = `${nameObj[selected][1]}`;
             document.getElementById("myName2").innerHTML = `${nameObj[selected][0]}`;
             addListItem(`${nameObj[selected][0]} | ${nameObj[selected][1]}`);
-
+            m.set(nameObj[selected][1],'');
+            nameObj.splice(selected, 1);
             document.getElementById("myCard").style.display = 'block';
         }
         main();
