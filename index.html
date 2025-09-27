@@ -234,6 +234,8 @@
             // console.log(d[0].data.targetUser.displayName);
             document.getElementById("myName1").innerHTML = `${nameObj[selected][1]}`;
             document.getElementById("myName2").innerHTML = `${nameObj[selected][0]}`;
+            addListItem(`${nameObj[selected][0]} | ${nameObj[selected][1]}`);
+
             document.getElementById("myCard").style.display = 'block';
         }
         main();
