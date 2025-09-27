@@ -60,18 +60,37 @@
 </head>
 
 <body>
-    <div class="card">
-        <h2 id="myName1"></h2>
-        <h2 id="myName2"></h2>
+    <div class="card" onclick="nextRandom()">
+        <h3 id="myName1"></h3>
+        <h1 id="myName2"></h1>
         <!-- <p>This is a centered card on the page.</p> -->
         <!-- <button onclick="showMessage()">Click Me</button> -->
     </div>
 
     <script>
         let ret = [];
-
-        function showMessage() {
-            alert("Hello! You clicked the button.");
+        let selected;
+        async function nextRandom() {
+            if(ret.length === 0){
+                document.getElementById("myName1").innerHTML = `No more peepoz │ ･ᯅ･ )`;
+                document.getElementById("myName2").innerHTML = ``;
+            }
+        
+            else if(ret.length){
+                let namesLen = ret.length;
+                selected=Math.floor(Math.random()*(namesLen));
+                // console.log(r);
+                // console.log(r,ret[r]);
+                let d = await GetViewerDisplayName('tw_shiori', ret[selected])
+                console.log(d[0].data.targetUser.displayName);
+                document.getElementById("myName1").innerHTML = `${ret[selected]}`;
+                document.getElementById("myName2").innerHTML = `${d[0].data.targetUser.displayName}`;
+                console.log('before');
+                console.log(ret);
+                ret.splice(selected,1);
+                console.log('after');
+                console.log(ret);
+            }
         }
         async function getUsername() {
             return fetch('https://gql.twitch.tv/gql#origin=twilight', {
@@ -123,12 +142,12 @@
             }
             // console.log('hi');
             let namesLen = ret.length;
-            let r=Math.floor(Math.random()*(namesLen));
-            console.log(r);
-            console.log(r,ret[r]);
-            let d = await GetViewerDisplayName('tw_shiori', ret[r])
+            selected=Math.floor(Math.random()*(namesLen));
+            console.log(selected);
+            console.log(selected,ret[selected]);
+            let d = await GetViewerDisplayName('tw_shiori', ret[selected])
             console.log(d[0].data.targetUser.displayName);
-            document.getElementById("myName1").innerHTML = `${ret[r]}`;
+            document.getElementById("myName1").innerHTML = `${ret[selected]}`;
             document.getElementById("myName2").innerHTML = `${d[0].data.targetUser.displayName}`;
         }
         main();
