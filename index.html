@@ -61,7 +61,8 @@
 
 <body>
     <div class="card">
-        <h2 id="myName"></h2>
+        <h2 id="myName1"></h2>
+        <h2 id="myName2"></h2>
         <!-- <p>This is a centered card on the page.</p> -->
         <!-- <button onclick="showMessage()">Click Me</button> -->
     </div>
@@ -127,7 +128,8 @@
             console.log(r,ret[r]);
             let d = await GetViewerDisplayName('tw_shiori', ret[r])
             console.log(d[0].data.targetUser.displayName);
-            document.getElementById("myName").innerHTML = d[0].data.targetUser.displayName;
+            document.getElementById("myName1").innerHTML = `${ret[r]}`;
+            document.getElementById("myName2").innerHTML = `${d[0].data.targetUser.displayName}`;
         }
         main();
         console.log(ret);
