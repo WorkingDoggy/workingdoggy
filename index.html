@@ -1,120 +1,137 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Running Dog — Demo</title>
-  <style>
-    :root{--bg:#9dd3ff;--ground:#6bb13b;--dog:#f2b76b;--accent:#6b3f2b}
-    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
-    body{background:linear-gradient(to top,var(--bg) 0%, #cfeefe 50%);display:flex;align-items:flex-end;justify-content:center}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centered Card</title>
+    <style>
+        /* Make the body take full height and center content */
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f2f5;
+            font-family: Arial, sans-serif;
+        }
 
-    .scene{width:100%;max-width:1000px;height:320px;position:relative;overflow:hidden}
-    .sky{position:absolute;inset:0}
-    .ground{position:absolute;left:0;right:0;bottom:0;height:80px;background:linear-gradient(#64a83a,#4e8a2b);box-shadow:inset 0 4px 12px rgba(0,0,0,0.08)}
+        /* Card styling */
+        .card {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 300px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
 
-    /* sun */
-    .sun{position:absolute;right:12%;top:6%;width:80px;height:80px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff2c7,#ffd85a);filter:drop-shadow(0 8px 20px rgba(255,200,50,0.25))}
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
 
-    /* path lines for motion feel */
-    .hills{position:absolute;left:-20%;bottom:20px;width:140%;height:120px;background:radial-gradient(closest-side,#7bd25a 18%, transparent 20%), radial-gradient(closest-side,#6ec24c 18%, transparent 20%);background-size:280px 120px;background-position:0 0,140px 0;opacity:0.6}
+        .card h2 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
 
-    /* Dog wrapper — this will move horizontally */
-    .dog-wrap{position:absolute;bottom:56px;left:-200px;width:220px;height:140px;transform-origin:center bottom;animation:run-across 6s linear infinite}
+        .card p {
+            color: #555;
+            margin-bottom: 1.5rem;
+        }
 
-    @keyframes run-across{
-      0%{left:-220px;transform:translateY(0) scaleX(1)}
-      8%{transform:translateY(-6px) scaleX(1.02)}
-      25%{left:25%;}
-      50%{left:55%;}
-      75%{left:85%;}
-      92%{transform:translateY(-6px) scaleX(0.98)}
-      100%{left:110%;transform:translateY(0) scaleX(1)}
-    }
+        .card button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
 
-    /* Dog body parts */
-    .dog{position:absolute;width:220px;height:140px;pointer-events:none}
-    .body{position:absolute;left:40px;top:40px;width:120px;height:60px;background:var(--dog);border-radius:40px 40px 30px 30px;box-shadow:inset -6px -6px 0 rgba(0,0,0,0.06)}
-    .belly{position:absolute;left:40px;top:72px;width:110px;height:36px;background:linear-gradient(#f6d2a3,#f0bd77);border-radius:30px}
-
-    .head{position:absolute;left:0;top:20px;width:64px;height:64px;background:var(--dog);border-radius:50%;transform-origin:18px 42px;box-shadow:inset -4px -4px 0 rgba(0,0,0,0.06);animation:head-bob 0.6s linear infinite}
-    @keyframes head-bob{0%{transform:rotate(8deg)}50%{transform:rotate(-6deg)}100%{transform:rotate(8deg)}}
-
-    .ear{position:absolute;left:6px;top:6px;width:18px;height:26px;background:var(--accent);border-radius:6px;transform:rotate(-22deg)}
-    .eye{position:absolute;left:32px;top:26px;width:9px;height:9px;background:#fff;border-radius:50%}
-    .pupil{position:absolute;left:36px;top:29px;width:4px;height:4px;background:#000;border-radius:50%}
-    .snout{position:absolute;left:40px;top:38px;width:30px;height:18px;background:#f6e0c6;border-radius:10px}
-    .nose{position:absolute;left:60px;top:44px;width:8px;height:8px;background:var(--accent);border-radius:50%}
-
-    /* tail */
-    .tail{position:absolute;right:10px;top:18px;width:50px;height:12px;background:var(--accent);border-radius:12px;transform-origin:8px 6px;animation:tail-wag .34s linear infinite}
-    @keyframes tail-wag{0%{transform:rotate(20deg)}50%{transform:rotate(-22deg)}100%{transform:rotate(20deg)}}
-
-    /* legs — four bars that rotate */
-    .leg{position:absolute;width:16px;height:62px;background:var(--accent);left:0;bottom:0;border-radius:10px;transform-origin:center top}
-    .leg::after{content:"";position:absolute;left:0;bottom:-8px;width:100%;height:10px;background:var(--accent);border-radius:6px}
-
-    .leg.front-left{left:60px;top:82px;animation:legFL 0.6s linear infinite}
-    .leg.front-right{left:92px;top:82px;animation:legFR 0.6s linear infinite}
-    .leg.back-left{left:20px;top:82px;animation:legBL 0.6s linear infinite}
-    .leg.back-right{left:44px;top:82px;animation:legBR 0.6s linear infinite}
-
-    @keyframes legFL{0%{transform:rotate(40deg)}50%{transform:rotate(-40deg)}100%{transform:rotate(40deg)}}
-    @keyframes legFR{0%{transform:rotate(-40deg)}50%{transform:rotate(40deg)}100%{transform:rotate(-40deg)}}
-    @keyframes legBL{0%{transform:rotate(-25deg)}50%{transform:rotate(25deg)}100%{transform:rotate(-25deg)}}
-    @keyframes legBR{0%{transform:rotate(25deg)}50%{transform:rotate(-25deg)}100%{transform:rotate(25deg)}}
-
-    /* shadow */
-    .shadow{position:absolute;left:40px;bottom:-6px;width:140px;height:20px;border-radius:50%;background:rgba(0,0,0,0.12);filter:blur(6px);transform-origin:center;animation:shadow-squash 0.6s linear infinite}
-    @keyframes shadow-squash{0%{transform:scaleX(1);opacity:0.9}50%{transform:scaleX(.78);opacity:0.65}100%{transform:scaleX(1);opacity:0.9}}
-
-    /* responsive tweaks */
-    @media (max-width:520px){.scene{height:260px}.dog-wrap{bottom:48px;transform-origin:center center}}
-  </style>
+        .card button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
+
 <body>
-  <div class="scene" role="img" aria-label="Animated running dog">
-    <div class="sky">
-      <div class="sun" aria-hidden="true"></div>
-      <div class="hills" aria-hidden="true"></div>
-    </div>
-    <div class="dog-wrap" id="runner">
-      <div class="dog">
-        <div class="body"></div>
-        <div class="belly"></div>
-        <div class="head">
-          <div class="ear"></div>
-          <div class="eye"></div>
-          <div class="pupil"></div>
-          <div class="snout"></div>
-          <div class="nose"></div>
-        </div>
-        <div class="tail"></div>
-
-        <div class="leg back-left leg-bl" aria-hidden="true"></div>
-        <div class="leg back-right leg-br" aria-hidden="true"></div>
-        <div class="leg front-left" aria-hidden="true"></div>
-        <div class="leg front-right" aria-hidden="true"></div>
-
-        <div class="shadow" aria-hidden="true"></div>
-      </div>
+    <div class="card">
+        <h2 id="myName"></h2>
+        <!-- <p>This is a centered card on the page.</p> -->
+        <!-- <button onclick="showMessage()">Click Me</button> -->
     </div>
 
-    <div class="ground" aria-hidden="true"></div>
-  </div>
+    <script>
+        let ret = [];
 
-  <script>
-    // Small JS to add a subtle bounce rhythm based on viewport width — purely decorative.
-    (function(){
-      const runner = document.getElementById('runner');
-      let speedMs = 6000; // matches CSS animation duration
-      // allow increasing speed with arrow keys (fun toy)
-      window.addEventListener('keydown', (e)=>{
-        if(e.key === 'ArrowRight') speedMs = Math.max(2000, speedMs - 500);
-        if(e.key === 'ArrowLeft') speedMs = Math.min(12000, speedMs + 500);
-        runner.style.animationDuration = speedMs + 'ms';
-      });
-    })();
-  </script>
+        function showMessage() {
+            alert("Hello! You clicked the button.");
+        }
+        async function getUsername() {
+            return fetch('https://gql.twitch.tv/gql#origin=twilight', {
+                method: 'POST',
+                headers: {
+                    'Client-Id': 'kimne78kx3ncx6brgo4mv6wki5h1ko',
+                    'X-Device-Id': 'zw5n91ru5SvvXtiWMP1eDGstDdRF1i3K',
+                    'Client-Version': '6b2b9b9b-9313-4823-9901-9c83b15adddf',
+                    'Client-Integrity': 'v4.local.Jc3aZU4WGY-SVI0cSjcQvaGFlWFfyScGVtVkn-uLcVa7HctKqfRuENwqmyuyGAxG0b-X_9PoZY6UXT-6OzOIOZaquAUamg26t4R-9HFuyliKVeR_htEzwqyBm_QwfG9KPgUmqv0tqVcFQHN_UwKq2vKy9_n3Jfr0sVr3-6LI_I6s1jrekdS6YlCJY-t9bkQLmaR4adyYBGtmrHDQHZ7u0JEaK2WdSqG5Za6qCt10ZGPqoglE9038nfMwFLxwU2LWS5CRI6cy_RnU8VpWuczQ9up-auvFA5-qAbdTBChTvV2Nozzne9L2pGwKpGhaqcvlBRcP6NI6ymLRkAzC2w8rm5URjobQCA8vsHrkFxO4dmWPgvrM-QHMFGhtCS46FlEMeCcsiAIZ6t5aY8zOcit9W-Sb5_zHog0NDdtzZVGT5iL75j9lr94TcXHCPvzq5WXvH-g',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify([{
+                    operationName: "ChatViewers",
+                    variables: { channelLogin: "tw_shiori" },
+                    extensions: {
+                        persistedQuery: {
+                            version: 1,
+                            sha256Hash: "bcfc3cf11076d47c827817d6a4a089bfe621268c7115ba1e8a5c9e37b5092256"
+                        }
+                    }
+                }])
+            })
+            .then(response => response.json())
+        }
+        async function GetViewerDisplayName(streamerName, targetName) {
+            let req = await fetch("https://gql.twitch.tv/gql#origin=twilight", {
+                "headers": {
+                    "Client-Id": "kimne78kx3ncx6brgo4mv6wki5h1ko",
+                },
+                "referrer": "https://www.twitch.tv/",
+                "body": `[{\"operationName\":\"ViewerCard\",\"variables\":{\"channelID\":null,\"channelLogin\":\"${streamerName}\",\"hasChannelID\":false,\"giftRecipientLogin\":\"${targetName}\",\"isViewerBadgeCollectionEnabled\":true,\"withStandardGifting\":true,\"badgeSourceChannelID\":null,\"badgeSourceChannelLogin\":\"${streamerName}\"},\"extensions\":{\"persistedQuery\":{\"version\":1,\"sha256Hash\":\"469ce8c47952153b079b37ed5500bd2774e253114d4254c86495a64f227d16b4\"}}}]`,
+                "method": "POST",
+            }).then((res) => { if (res.ok) return res.json() });
+            return req;
+        }
+
+        async function main(){
+            let names = await getUsername();
+            for(let k in names[0].data.channel.chatters){
+                // console.log(k);
+                if(names[0].data.channel.chatters[k].length){
+                    for(let i of names[0].data.channel.chatters[k]){
+                        if(i.login){
+                            // console.log(i.login);
+                            ret.push(i.login);
+                        }
+                    }
+                }
+            }
+            // console.log('hi');
+            let namesLen = ret.length;
+            let r=Math.floor(Math.random()*(namesLen));
+            console.log(r);
+            console.log(r,ret[r]);
+            let d = await GetViewerDisplayName('tw_shiori', ret[r])
+            console.log(d[0].data.targetUser.displayName);
+            document.getElementById("myName").innerHTML = d[0].data.targetUser.displayName;
+        }
+        main();
+        console.log(ret);
+    </script>
 </body>
+
 </html>
